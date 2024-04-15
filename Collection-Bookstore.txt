@@ -1,0 +1,213 @@
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-04-15T12:53:37.995+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    40.00 KiB
+test> use cda12
+switched to db cda12
+cda12> use bookstore
+switched to db bookstore
+bookstore> db.bookstore.insertOne({title : "Post Title 1", body : "Body of post",})
+{
+  acknowledged: true,
+  insertedId: ObjectId('661cdfe1a744f63cef16c9b5')
+}
+bookstore> db.bookstore.insertOne({title : "Post Title 1", body : "Body of post", category : "News", likes : 1, tags : ["news", "events"], date : Date()})
+{
+  acknowledged: true,
+  insertedId: ObjectId('661ce11aa744f63cef16c9b6')
+}
+bookstore> db.bookstore.insertMany([{title : "Post Title 2", body : "Body of post", category : "Technology", likes : 3, tags : ["news", "events"], date : Date()}, {title : "Post Title 3", body : "Body of Post", category : "Event", likes : 2, tags : ["news", "events"], date : Date()}, {title : "Post Title 4", body : "Body of Post", category : "Event", likes : 4, tags : ["news", "events"], date : Date()}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('661ce3b5a744f63cef16c9b7'),
+    '1': ObjectId('661ce3b5a744f63cef16c9b8'),
+    '2': ObjectId('661ce3b5a744f63cef16c9b9')
+  }
+}
+bookstore> db.bookstore.find()
+[
+  {
+    _id: ObjectId('661cdfe1a744f63cef16c9b5'),
+    title: 'Post Title 1',
+    body: 'Body of post'
+  },
+  {
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    category: 'News',
+    likes: 1,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b7'),
+    title: 'Post Title 2',
+    body: 'Body of post',
+    category: 'Technology',
+    likes: 3,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b8'),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    category: 'Event',
+    likes: 2,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b9'),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'Event',
+    likes: 4,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  }
+]
+bookstore> db.bookstore.find({category : "News"})
+[
+  {id: ObjectId('661cdfe1a744f63cef16c9b5'),
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    category: 'News',
+    likes: 1,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  }
+]
+bookstore> db.bookstore.find({likes : 4})
+[
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b9'),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'Event',
+    likes: 4,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  }
+]
+bookstore> db.bookstore.find({}, {title : 0, date : 1})
+MongoServerError[Location31253]: Cannot do inclusion on field date in exclusion projection
+bookstore> db.bookstore.find({}, {title : 1, date : 1})
+[
+  { _id: ObjectId('661cdfe1a744f63cef16c9b5'), title: 'Post Title 1' },
+  {
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b7'),
+    title: 'Post Title 2',
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b8'),
+    title: 'Post Title 3',
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b9'),
+    title: 'Post Title 4',
+    date: 'Mon Apr 15 2024 13:52:13 GMT+0530 (India Standard Time)'
+  }
+]
+bookstore> db.bookstore.find({}, {title : 0, date : 0})
+[
+  { _id: ObjectId('661cdfe1a744f63cef16c9b5'), body: 'Body of post' },
+  {
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    body: 'Body of post',
+    category: 'News',
+    likes: 1,
+    tags: [ 'news', 'events' ]
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b7'),
+    body: 'Body of post',
+    category: 'Technology',
+    likes: 3,
+    tags: [ 'news', 'events' ]
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b8'),
+    body: 'Body of Post',
+    category: 'Event',
+    likes: 2,
+    tags: [ 'news', 'events' ]
+  },
+  {
+    _id: ObjectId('661ce3b5a744f63cef16c9b9'),
+    body: 'Body of Post',
+    category: 'Event',
+    likes: 4,
+    tags: [ 'news', 'events' ]
+  }
+]
+bookstore> db.bookstore.updateOne({title : "Post Title 1"},{$set : {likes : 3}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+bookstore> db.bookstore.find({title : "Post Title 1"})
+[
+  {
+    _id: ObjectId('661cdfe1a744f63cef16c9b5'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    likes: 3
+  },
+  {
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    category: 'News',
+    likes: 1,
+bookstore>
+[   date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  {
+    _id: ObjectId('661cdfe1a744f63cef16c9b5'),
+    title: 'Post Title 1',dateMany({title : "Post Title 1"},{$set : {likes : 5}})
+    body: 'Body of post',
+    likes: 5ed: true,
+  },sertedId: null,
+  {atchedCount: 2,
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    category: 'News',re.find({title : "Post Title 1"})
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  } title: 'Post Title 1',
+]   body: 'Body of post',
+    likes: 5
+  },
+  {
+    _id: ObjectId('661ce11aa744f63cef16c9b6'),
+    title: 'Post Title 1',
+    body: 'Body of post',
+    category: 'News',
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Mon Apr 15 2024 13:41:06 GMT+0530 (India Standard Time)'
+  }
+]
+bookstore>
